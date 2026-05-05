@@ -1,76 +1,155 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AL CODE - Belajar Koding</title>
+<title>AL CODE PRO - Playground</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/dracula.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
 <style>
+:root{--bg:#0f172a;--bg2:#1e293b;--bg3:#334155;--text:#e2e8f0;--accent:#38bdf8;--border:#334155}
+[data-theme="light"]{--bg:#f8fafc;--bg2:#e2e8f0;--bg3:#cbd5e1;--text:#0f172a;--accent:#0284c7;--border:#cbd5e1}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:sans-serif;background:#0f172a;color:#e2e8f0;height:100vh;display:flex;flex-direction:column}
-.header{background:#1e293b;padding:12px;text-align:center;border-bottom:2px solid #38bdf8}
-h1{color:#38bdf8;font-size:18px}
-.container{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;overflow:hidden}
+body{font-family:sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column}
+.header{background:var(--bg2);padding:10px 12px;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--accent);flex-wrap:wrap}
+.header h1{color:var(--accent);font-size:16px;margin-right:auto}
+.btn{background:var(--accent);color:var(--bg);border:0;padding:6px 10px;font-weight:600;border-radius:6px;cursor:pointer;font-size:13px}
+.btn-ghost{background:var(--bg3);color:var(--text)}
+select{background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:6px;border-radius:6px;font-size:13px}
+.container{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;min-height:0}
 .editor{display:flex;flex-direction:column;gap:8px;min-height:0}
-.tabs{display:flex;gap:4px;align-items:center}
-.tab{padding:8px 12px;background:#334155;border:none;color:#94a3b8;cursor:pointer;border-radius:8px 8px 0 0;font-size:14px}
-.tab.active{background:#0f172a;color:#38bdf8}
-textarea{flex:1;background:#0f172a;color:#e2e8f0;border:1px solid #334155;padding:12px;font-family:monospace;font-size:13px;resize:none;border-radius:0 8px 8px 8px;outline:none}
-iframe{flex:1;background:#fff;border:1px solid #334155;border-radius:8px;min-height:0}
-.btn{background:#38bdf8;color:#020617;border:0;padding:8px 12px;font-weight:700;border-radius:8px;cursor:pointer;font-size:14px;margin-left:auto}
-@media(max-width:768px){.container{grid-template-columns:1fr}.editor{height:50vh}iframe{height:50vh}}
+.tabs{display:flex;gap:4px}
+.tab{padding:6px 12px;background:var(--bg3);border:none;color:var(--text);cursor:pointer;border-radius:6px 6px 0 0;font-size:13px;opacity:.7}
+.tab.active{background:var(--bg);opacity:1;color:var(--accent)}
+.code-wrap{flex:1;border:1px solid var(--border);border-radius:0 6px 6px 6px;overflow:hidden}
+.CodeMirror{height:100%!important;font-size:13px}
+.preview{display:flex;flex-direction:column;gap:8px;min-height:0}
+iframe{flex:1;background:#fff;border:1px solid var(--border);border-radius:6px}
+#console{background:#000;color:#0f0;font-family:monospace;font-size:12px;padding:8px;border-radius:6px;height:120px;overflow:auto;border:1px solid var(--border)}
+#console.err{color:#f87171}#console.warn{color:#fbbf24}
+@media(max-width:768px){.container{grid-template-columns:1fr}.preview{height:50vh}.editor{height:50vh}}
 </style>
 </head>
 <body>
-<div class="header"><h1>💻 AL CODE - Belajar Koding</h1></div>
+<div class="header">
+  <h1>💻 AL CODE PRO</h1>
+  <select id="contoh">
+    <option value="">Contoh Project...</option>
+    <option value="kalkulator">Kalkulator</option>
+    <option value="todo">Todo List</option>
+    <option value="jam">Jam Digital</option>
+    <option value="game">Game Klik</option>
+  </select>
+  <button class="btn btn-ghost" id="themeBtn">☀️</button>
+  <button class="btn btn-ghost" id="downloadBtn">💾 Download</button>
+  <button class="btn btn-ghost" id="shareBtn">🔗 Share</button>
+  <button class="btn" id="runBtn">▶️ RUN</button>
+</div>
 <div class="container">
   <div class="editor">
     <div class="tabs">
       <button class="tab active" data-tab="html">HTML</button>
       <button class="tab" data-tab="css">CSS</button>
       <button class="tab" data-tab="js">JS</button>
-      <button class="btn" id="runBtn">▶️ RUN</button>
     </div>
-    <textarea id="html"><h1>Halo Bos!</h1>
-<p>Ganti kode ini trus pencet RUN</p>
-<button onclick="tes()">Klik Aku</button></textarea>
-    <textarea id="css" style="display:none">body{text-align:center;padding:30px;background:#1e293b;color:white}
-h1{color:#38bdf8}button{background:#38bdf8;border:0;padding:10px 20px;border-radius:8px;margin-top:20px;cursor:pointer}</textarea>
-    <textarea id="js" style="display:none">function tes(){
-  alert('Mantap bos, JS jalan!')
-}</textarea>
+    <div class="code-wrap"><textarea id="html"></textarea></div>
+    <div class="code-wrap" style="display:none"><textarea id="css"></textarea></div>
+    <div class="code-wrap" style="display:none"><textarea id="js"></textarea></div>
   </div>
-  <iframe id="out"></iframe>
+  <div class="preview">
+    <iframe id="out"></iframe>
+    <div id="console">Console siap...</div>
+  </div>
 </div>
-<script>
-const tabs = document.querySelectorAll('.tab');
-const areas = document.querySelectorAll('textarea');
-const runBtn = document.getElementById('runBtn');
 
-tabs.forEach(btn => {
-  btn.onclick = () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    areas.forEach(a => a.style.display = 'none');
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).style.display = 'block';
+<script>
+const editors = {
+  html: CodeMirror.fromTextArea(document.getElementById('html'), {mode:'htmlmixed',theme:'dracula',lineNumbers:true}),
+  css: CodeMirror.fromTextArea(document.getElementById('css'), {mode:'css',theme:'dracula',lineNumbers:true}),
+  js: CodeMirror.fromTextArea(document.getElementById('js'), {mode:'javascript',theme:'dracula',lineNumbers:true})
+};
+
+const contoh = {
+  kalkulator: {html:`<div class="calc"><input id="layar" readonly><div class="btns"><button onclick="pencet('1')">1</button><button onclick="pencet('2')">2</button><button onclick="pencet('+')">+</button><button onclick="hitung()">=</button></div></div>`,css:`.calc{width:200px;margin:50px auto;text-align:center}input{width:100%;padding:10px;font-size:20px;margin-bottom:10px}.btns{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}button{padding:15px;font-size:18px}`,js:`let l=document.getElementById('layar');function pencet(a){l.value+=a}function hitung(){l.value=eval(l.value)}`},
+  todo: {html:`<div class="todo"><h2>Todo List</h2><input id="input"><button onclick="add()">Add</button><ul id="list"></ul></div>`,css:`.todo{max-width:300px;margin:30px auto}input{width:70%;padding:8px}button{padding:8px}li{margin:8px 0;cursor:pointer}`,js:`function add(){let i=document.getElementById('input'),u=document.getElementById('list');if(i.value){let li=document.createElement('li');li.innerText=i.value;li.onclick=()=>li.remove();u.appendChild(li);i.value=''}}`},
+  jam: {html:`<div id="jam"></div>`,css:`#jam{font-size:60px;text-align:center;margin-top:20vh;font-family:monospace;color:#38bdf8}`,js:`setInterval(()=>{document.getElementById('jam').innerText=new Date().toLocaleTimeString('id')},1000)`},
+  game: {html:`<h3>Skor: <span id="skor">0</span></h3><button id="klik" onclick="tambah()">KLIK AKU!</button>`,css:`body{text-align:center;padding-top:50px}#klik{padding:20px 40px;font-size:20px;background:#38bdf8;border:0;border-radius:10px}`,js:`let s=0;function tambah(){document.getElementById('skor').innerText=++s}`}
+};
+
+let current = 'html';
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.code-wrap').forEach(x=>x.style.display='none');
+    t.classList.add('active');
+    document.querySelector(`#${t.dataset.tab}`).parentElement.style.display='block';
+    current=t.dataset.tab;editors[current].refresh();
   }
 });
 
 function run(){
-  const h = document.getElementById('html').value;
-  const c = `<style>${document.getElementById('css').value}</style>`;
-  const j = `<script>${document.getElementById('js').value}<\/script>`;
-  document.getElementById('out').srcdoc = h + c + j;
+  const h=editors.html.getValue();
+  const c=`<style>${editors.css.getValue()}</style>`;
+  const j=`<script>
+    const log=(...a)=>parent.postMessage({type:'log',data:a},'*');
+    const err=(...a)=>parent.postMessage({type:'err',data:a},'*');
+    console.log=(...a)=>log(...a);
+    console.error=(...a)=>err(...a);
+    window.onerror=(m,s,l,c,e)=>{err(m);return true};
+    ${editors.js.getValue()}
+  <\/script>`;
+  document.getElementById('out').srcdoc=h+c+j;
+  document.getElementById('console').innerHTML='Console siap...';
 }
 
-runBtn.onclick = run;
-run(); // Jalan pertama kali
+window.onmessage=e=>{
+  const c=document.getElementById('console');
+  if(e.data.type==='log')c.innerHTML+=`<div>${e.data.data.join(' ')}</div>`;
+  if(e.data.type==='err')c.innerHTML+=`<div class="err">❌ ${e.data.data.join(' ')}</div>`;
+  c.scrollTop=c.scrollHeight;
+};
+
+document.getElementById('runBtn').onclick=run;
+document.getElementById('contoh').onchange=e=>{
+  if(e.target.value){const p=contoh[e.target.value];editors.html.setValue(p.html);editors.css.setValue(p.css);editors.js.setValue(p.js);run()}
+};
+document.getElementById('themeBtn').onclick=()=>{
+  const d=document.documentElement;
+  const t=d.dataset.theme==='dark'?'light':'dark';
+  d.dataset.theme=t;
+  document.getElementById('themeBtn').innerText=t==='dark'?'☀️':'🌙';
+  const ct=t==='dark'?'dracula':'default';
+  Object.values(editors).forEach(e=>e.setOption('theme',ct));
+};
+document.getElementById('downloadBtn').onclick=()=>{
+  const blob=new Blob([document.getElementById('out').srcdoc],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='alcode.html';a.click();
+};
+document.getElementById('shareBtn').onclick=()=>{
+  const data=btoa(JSON.stringify({h:editors.html.getValue(),c:editors.css.getValue(),j:editors.js.getValue()}));
+  const url=location.origin+location.pathname+'#'+data;
+  navigator.clipboard.writeText(url);alert('Link dicopy! Paste ke temen lu');
+};
+
+// Load dari URL atau localStorage
+const hash=location.hash.slice(1);
+if(hash){
+  try{const d=JSON.parse(atob(hash));editors.html.setValue(d.h);editors.css.setValue(d.c);editors.js.setValue(d.j)}catch{}
+}else{
+  editors.html.setValue(localStorage.h||`<h1>Halo Bos!</h1>\n<p>AL CODE PRO siap!</p>\n<button onclick="tes()">Klik</button>`);
+  editors.css.setValue(localStorage.c||`body{text-align:center;padding:40px;background:#1e293b;color:white}\nh1{color:#38bdf8}`);
+  editors.js.setValue(localStorage.j||`function tes(){console.log('JS Jalan!')}`);
+}
 
 // Auto save
-['html','css','js'].forEach(id=>{
-  const el = document.getElementById(id);
-  el.value = localStorage.getItem(id) || el.value;
-  el.oninput = e => localStorage.setItem(id, e.target.value);
-});
+['html','css','js'].forEach(k=>editors[k].on('change',e=>localStorage[k]=e.getValue()));
+
+run();
 </script>
 </body>
 </html>
