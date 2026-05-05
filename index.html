@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AL CODE - Belajar Koding</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:sans-serif;background:#0f172a;color:#e2e8f0;height:100vh;display:flex;flex-direction:column}
 .header{background:#1e293b;padding:12px;text-align:center;border-bottom:2px solid #38bdf8}
 h1{color:#38bdf8;font-size:18px}
-.container{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
-.editor{display:flex;flex-direction:column;gap:8px}
-.tabs{display:flex;gap:4px}
+.container{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;overflow:hidden}
+.editor{display:flex;flex-direction:column;gap:8px;min-height:0}
+.tabs{display:flex;gap:4px;align-items:center}
 .tab{padding:8px 12px;background:#334155;border:none;color:#94a3b8;cursor:pointer;border-radius:8px 8px 0 0;font-size:14px}
 .tab.active{background:#0f172a;color:#38bdf8}
-textarea{flex:1;background:#0f172a;color:#e2e8f0;border:1px solid #334155;padding:12px;font-family:monospace;font-size:13px;resize:none;border-radius:0 8px 8px 8px}
-iframe{flex:1;background:#fff;border:1px solid #334155;border-radius:8px}
-.btn{background:#38bdf8;color:#020617;border:0;padding:8px 12px;font-weight:700;border-radius:8px;cursor:pointer;font-size:14px}
-@media(max-width:768px){.container{grid-template-columns:1fr;height:calc(100vh-60px)}.editor{height:50vh}iframe{height:50vh}}
+textarea{flex:1;background:#0f172a;color:#e2e8f0;border:1px solid #334155;padding:12px;font-family:monospace;font-size:13px;resize:none;border-radius:0 8px 8px 8px;outline:none}
+iframe{flex:1;background:#fff;border:1px solid #334155;border-radius:8px;min-height:0}
+.btn{background:#38bdf8;color:#020617;border:0;padding:8px 12px;font-weight:700;border-radius:8px;cursor:pointer;font-size:14px;margin-left:auto}
+@media(max-width:768px){.container{grid-template-columns:1fr}.editor{height:50vh}iframe{height:50vh}}
 </style>
 </head>
 <body>
@@ -25,16 +25,16 @@ iframe{flex:1;background:#fff;border:1px solid #334155;border-radius:8px}
 <div class="container">
   <div class="editor">
     <div class="tabs">
-      <button class="tab active" onclick="tab('html')">HTML</button>
-      <button class="tab" onclick="tab('css')">CSS</button>
-      <button class="tab" onclick="tab('js')">JS</button>
-      <button class="btn" onclick="run()" style="margin-left:auto">▶️ RUN</button>
+      <button class="tab active" data-tab="html">HTML</button>
+      <button class="tab" data-tab="css">CSS</button>
+      <button class="tab" data-tab="js">JS</button>
+      <button class="btn" id="runBtn">▶️ RUN</button>
     </div>
     <textarea id="html"><h1>Halo Bos!</h1>
 <p>Ganti kode ini trus pencet RUN</p>
 <button onclick="tes()">Klik Aku</button></textarea>
     <textarea id="css" style="display:none">body{text-align:center;padding:30px;background:#1e293b;color:white}
-h1{color:#38bdf8}button{background:#38bdf8;border:0;padding:10px 20px;border-radius:8px;margin-top:20px}</textarea>
+h1{color:#38bdf8}button{background:#38bdf8;border:0;padding:10px 20px;border-radius:8px;margin-top:20px;cursor:pointer}</textarea>
     <textarea id="js" style="display:none">function tes(){
   alert('Mantap bos, JS jalan!')
 }</textarea>
@@ -42,13 +42,34 @@ h1{color:#38bdf8}button{background:#38bdf8;border:0;padding:10px 20px;border-rad
   <iframe id="out"></iframe>
 </div>
 <script>
-function tab(t){document.querySelectorAll('textarea').forEach(e=>e.style.display='none');document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));document.getElementById(t).style.display='block';event.target.classList.add('active')}
-function run(){const h=document.getElementById('html').value,c=`<style>${document.getElementById('css').value}</style>`,j=`<script>${document.getElementById('js').value}<\/script>`;document.getElementById('out').srcdoc=h+c+j}
-run();
+const tabs = document.querySelectorAll('.tab');
+const areas = document.querySelectorAll('textarea');
+const runBtn = document.getElementById('runBtn');
+
+tabs.forEach(btn => {
+  btn.onclick = () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    areas.forEach(a => a.style.display = 'none');
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).style.display = 'block';
+  }
+});
+
+function run(){
+  const h = document.getElementById('html').value;
+  const c = `<style>${document.getElementById('css').value}</style>`;
+  const j = `<script>${document.getElementById('js').value}<\/script>`;
+  document.getElementById('out').srcdoc = h + c + j;
+}
+
+runBtn.onclick = run;
+run(); // Jalan pertama kali
+
 // Auto save
 ['html','css','js'].forEach(id=>{
-  document.getElementById(id).value=localStorage.getItem(id)||document.getElementById(id).value;
-  document.getElementById(id).oninput=e=>localStorage.setItem(id,e.target.value);
+  const el = document.getElementById(id);
+  el.value = localStorage.getItem(id) || el.value;
+  el.oninput = e => localStorage.setItem(id, e.target.value);
 });
 </script>
 </body>
